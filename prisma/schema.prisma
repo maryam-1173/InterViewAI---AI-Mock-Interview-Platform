@@ -1,0 +1,63 @@
+// Real local persistence layer, backed by SQLite so the MVP runs without
+// any external database provisioning. The original architecture doc calls
+// for Postgres in production -- to switch, change `provider` below to
+// "postgresql", point `url` at a real DATABASE_URL, and re-run
+// `npx prisma migrate dev` (SQLite-only quirks are noted inline).
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id          String     @id @default(cuid())
+  role        String
+  startedAt   DateTime   @default(now())
+  endedAt     DateTime?
+  durationSec Int?
+  responses   Response[]
+  score       ScoreSummary?
+}
+
+model Response {
+  id          String   @id @default(cuid())
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String
+  speaker     String   // "ai" | "candidate"
+  text        String
+  timestampMs Int
+  // SQLite has no native array type -- filler words are stored as a JSON
+  // string (e.g. `["um","like"]`) and parsed back out in application code.
+  fillerWordsJson String @default("[]")
+}
+
+model ScoreSummary {
+  id              String  @id @default(cuid())
+  session         Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId       String  @unique
+  domainScore     Int
+  fluencyScore    Int
+  confidenceScore Int
+  structureScore  Int
+  overallScore    Int
+  wordsPerMinute  Int
+  fillerWordCount Int
+  // JSON-encoded string[] of action-plan bullet points.
+  actionPlanJson  String
+}
+
+// Role-specific question bank used by the heuristic question engine
+// (see src/lib/interview-engine.ts). This table is the seedable version
+// of the in-memory bank in src/lib/mock-data.ts.
+model QuestionBankEntry {
+  id         String  @id @default(cuid())
+  role       String
+  mode       String  // "speaking" | "listening" | "written"
+  prompt     String
+  isFollowUp Boolean @default(false)
+}

@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  /* Stage Ink -- interview-room dark ground */
+  --color-ink: #0a0c11;
+  --color-panel: #12151d;
+  --color-panel-raised: #171b25;
+  --color-border: #262b38;
+
+  /* Text */
+  --color-paper: #edede7;
+  --color-graphite: #838ba0;
+  --color-graphite-dim: #565d70;
+
+  /* Signature accents */
+  --color-spotlight: #f2a93b;   /* amber -- the AI / question / spotlight cue */
+  --color-spotlight-dim: #7a5b26;
+  --color-signal: #5eead4;      /* cyan -- the candidate / voice input cue */
+  --color-signal-dim: #2f6b62;
+  --color-alert: #f0645a;       /* coral -- flagged issues, filler words */
+  --color-alert-dim: #7a352f;
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+}
+
+@theme inline {
+  --color-ink: var(--color-ink);
+  --color-panel: var(--color-panel);
+  --color-panel-raised: var(--color-panel-raised);
+  --color-border: var(--color-border);
+  --color-paper: var(--color-paper);
+  --color-graphite: var(--color-graphite);
+  --color-graphite-dim: var(--color-graphite-dim);
+  --color-spotlight: var(--color-spotlight);
+  --color-spotlight-dim: var(--color-spotlight-dim);
+  --color-signal: var(--color-signal);
+  --color-signal-dim: var(--color-signal-dim);
+  --color-alert: var(--color-alert);
+  --color-alert-dim: var(--color-alert-dim);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Signature waveform pulse -- reused across hero, live session, and reports */
+@keyframes pulse-bar {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
+
+.waveform-bar {
+  animation: pulse-bar 1.1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+::selection {
+  background: var(--color-spotlight);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-spotlight);
+  outline-offset: 2px;
+}
